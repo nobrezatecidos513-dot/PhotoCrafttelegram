@@ -1,20 +1,21 @@
 # PhotoCrafttelegram
 
-Versão 2 do bot do Telegram para processar fotos com filtros e devolver a imagem editada no próprio chat.
+Versão 3 do bot do Telegram para edição de fotos com filtros interativos e processamento profissional no próprio chat.
 
-## O que mudou na versão 2
+## O que mudou na versão 3
 
-- menu com filtros interativos
-- opções de edição: Preto & Branco, Sépia, Contraste e Vintage
-- envio de imagem com resposta em linha no Telegram
-- melhor experiência para usuários que enviam fotos diretamente para o bot
+- menu de filtros mais completo
+- suporte a efeitos: Preto & Branco, Sépia, Contraste, Vintage, Warm, Sharp
+- feedback visual mais profissional
+- melhor organização da lógica do bot
+- tratamento de erros e mensagens de ajuda mais claras
 
 ## Como funciona
 
-- O usuário envia uma foto para o bot.
-- O bot mostra opções de filtros.
-- O usuário escolhe um efeito.
-- O bot retorna a imagem com o filtro aplicado.
+1. O usuário envia uma foto para o bot.
+2. O bot mostra os filtros disponíveis.
+3. O usuário escolhe um efeito.
+4. O bot aplica o filtro e devolve a imagem editada como resposta.
 
 ## Tecnologias
 
@@ -26,7 +27,7 @@ Versão 2 do bot do Telegram para processar fotos com filtros e devolver a image
 
 1. Crie um bot no Telegram usando o @BotFather.
 2. Copie o token do bot.
-3. Crie um arquivo `.env` com o seguinte conteúdo:
+3. Crie um arquivo `.env` com o conteúdo abaixo:
 
    ```env
    BOT_TOKEN=SEU_TOKEN_AQUI
@@ -48,8 +49,8 @@ Versão 2 do bot do Telegram para processar fotos com filtros e devolver a image
 
 - `/start` — inicia o bot
 - `/help` — mostra instruções de uso
-- `/menu` — mostra opções de filtro
+- `/menu` — mostra os filtros disponíveis
 
 ## Observação
 
-Esta é uma versão mais completa do projeto, funcionando diretamente dentro do aplicativo Telegram como um bot de processamento de imagem.
+Esta é uma versão mais robusta do projeto, funcionando diretamente dentro do Telegram como um bot de edição de fotos.
