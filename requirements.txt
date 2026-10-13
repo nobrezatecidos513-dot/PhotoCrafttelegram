@@ -3,7 +3,7 @@ import logging
 from io import BytesIO
 from urllib.parse import quote, unquote
 
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps, ImageDraw, ImageFont
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -15,7 +15,7 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN não foi encontrado. Crie um arquivo .env com o seu token do Telegram.")
+    raise ValueError("BOT_TOKEN não foi encontrado. Crie um arquivo .env com seu token do Telegram.")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
@@ -27,6 +27,9 @@ FILTERS = {
     "vintage": "Vintage",
     "warm": "Warm",
     "sharp": "Sharp",
+    "bright": "Brilho",
+    "cool": "Frio",
+    "watermark": "Marca d'água",
 }
 
 
@@ -57,11 +60,52 @@ def warm_tone(img: Image.Image) -> Image.Image:
     return output
 
 
+def cool_tone(img: Image.Image) -> Image.Image:
+    output = img.convert("RGB")
+    pixels = output.load()
+    width, height = output.size
+
+    for y in range(height):
+        for x in range(width):
+            r, g, b = output.getpixel((x, y))
+            pixels[x, y] = (max(0, r - 25), g, min(255, b + 35))
+    return output
+
+
 def vintage_tone(img: Image.Image) -> Image.Image:
     grayscale = ImageOps.grayscale(img)
     grayscale = ImageEnhance.Contrast(grayscale).enhance(1.9)
     sepia = Image.new("RGB", grayscale.size, (120, 90, 60))
     return Image.blend(grayscale.convert("RGB"), sepia, 0.28)
+
+
+def add_watermark(img: Image.Image, text: str = "PhotoCraft") -> Image.Image:
+    output = img.convert("RGBA")
+    width, height = output.size
+
+    alpha = Image.new("RGBA", output.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(alpha)
+
+    overlay = Image.new("RGBA", output.size, (0, 0, 0, 0))
+    overlay_draw = ImageDraw.Draw(overlay)
+
+    box = (0, height - 110, width, height)
+    overlay_draw.rectangle(box, fill=(0, 0, 0, 120))
+
+    try:
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", max(24, int(width / 20)))
+    except Exception:
+        font = ImageFont.load_default()
+
+    text_bbox = overlay_draw.textbbox((0, 0), text, font=font)
+    text_width = text_bbox[2] - text_bbox[0]
+    text_height = text_bbox[3] - text_bbox[1]
+
+    position = ((width - text_width) // 2, height - 70)
+    overlay_draw.text(position, text, font=font, fill=(255, 255, 255, 220))
+
+    output = Image.alpha_composite(output, overlay)
+    return output.convert("RGB")
 
 
 def apply_filter(img: Image.Image, filter_name: str) -> Image.Image:
@@ -85,6 +129,15 @@ def apply_filter(img: Image.Image, filter_name: str) -> Image.Image:
     if filter_name == "sharp":
         return img.filter(ImageFilter.SHARPEN)
 
+    if filter_name == "bright":
+        return ImageEnhance.Brightness(img).enhance(1.35)
+
+    if filter_name == "cool":
+        return cool_tone(img)
+
+    if filter_name == "watermark":
+        return add_watermark(img, "PhotoCraft")
+
     return img
 
 
@@ -104,7 +157,7 @@ async def cmd_start(message: types.Message):
         "Comandos disponíveis:\n"
         "/start - iniciar\n"
         "/help - ajuda\n"
-        "/menu - abrir filtros"
+        "/menu - mostrar filtros"
     )
 
 
@@ -115,7 +168,7 @@ async def cmd_help(message: types.Message):
         "1. Envie uma foto para o bot\n"
         "2. Escolha um filtro\n"
         "3. Receba a imagem editada no chat\n\n"
-        "Você também pode usar /menu para abrir a seleção de filtros."
+        "Você também pode usar /menu para mostrar os filtros."
     )
 
 
@@ -123,7 +176,7 @@ async def cmd_help(message: types.Message):
 async def cmd_menu(message: types.Message):
     keyboard = InlineKeyboardMarkup(row_width=2)
     for key, label in FILTERS.items():
-        keyboard.insert(InlineKeyboardButton(label, callback_data=f"preview:{key}"))
+        keyboard.insert(InlineKeyboardButton(label, callback_data=f"menu:{key}"))
 
     await message.answer("Escolha um filtro:", reply_markup=keyboard)
 
@@ -138,8 +191,8 @@ async def handle_photo(message: types.Message):
     )
 
 
-@dp.callback_query_handler(lambda c: c.data.startswith("preview:"))
-async def handle_preview_callback(callback_query: types.CallbackQuery):
+@dp.callback_query_handler(lambda c: c.data.startswith("menu:"))
+async def handle_menu_callback(callback_query: types.CallbackQuery):
     _, filter_name = callback_query.data.split(":", 1)
     await bot.answer_callback_query(
         callback_query.id,
@@ -166,7 +219,7 @@ async def handle_filter_callback(callback_query: types.CallbackQuery):
         processed = apply_filter(img, filter_name)
 
         output = BytesIO()
-        processed.save(output, format="JPEG", quality=90)
+        processed.save(output, format="JPEG", quality=92)
         output.seek(0)
 
         await callback_query.message.reply_photo(

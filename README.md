@@ -1,21 +1,20 @@
 # PhotoCrafttelegram
 
-Versão 3 do bot do Telegram para edição de fotos com filtros interativos e processamento profissional no próprio chat.
+Versão 4 do bot do Telegram para edição de fotos com filtros profissionais, marca d'água e melhor experiência de uso.
 
-## O que mudou na versão 3
+## O que mudou na versão 4
 
-- menu de filtros mais completo
-- suporte a efeitos: Preto & Branco, Sépia, Contraste, Vintage, Warm, Sharp
-- feedback visual mais profissional
-- melhor organização da lógica do bot
-- tratamento de erros e mensagens de ajuda mais claras
+- filtros mais completos
+- suporte a brilho, frio, sharpen e marca d'água
+- melhor organização do código do bot
+- experiência mais profissional com mensagens de confirmação e ajuda
 
-## Como funciona
+## Funcionalidades
 
-1. O usuário envia uma foto para o bot.
-2. O bot mostra os filtros disponíveis.
-3. O usuário escolhe um efeito.
-4. O bot aplica o filtro e devolve a imagem editada como resposta.
+- envio de fotos diretamente no Telegram
+- escolha de filtro em menu interativo
+- processamento de imagem com Pillow
+- retorno da foto editada no chat
 
 ## Tecnologias
 
@@ -25,9 +24,9 @@ Versão 3 do bot do Telegram para edição de fotos com filtros interativos e pr
 
 ## Como executar
 
-1. Crie um bot no Telegram usando o @BotFather.
+1. Crie um bot usando o @BotFather.
 2. Copie o token do bot.
-3. Crie um arquivo `.env` com o conteúdo abaixo:
+3. Crie um arquivo `.env` com:
 
    ```env
    BOT_TOKEN=SEU_TOKEN_AQUI
@@ -48,9 +47,9 @@ Versão 3 do bot do Telegram para edição de fotos com filtros interativos e pr
 ## Comandos
 
 - `/start` — inicia o bot
-- `/help` — mostra instruções de uso
-- `/menu` — mostra os filtros disponíveis
+- `/help` — ajuda
+- `/menu` — mostra filtros
 
 ## Observação
 
-Esta é uma versão mais robusta do projeto, funcionando diretamente dentro do Telegram como um bot de edição de fotos.
+Esta é uma versão mais avançada do projeto, funcionando diretamente dentro do aplicativo do Telegram como um bot de processamento de imagem.
