@@ -6,7 +6,7 @@ Bot do Telegram para processar fotos com efeitos simples e devolver a imagem edi
 
 - O usuário envia uma foto para o bot.
 - O bot processa a imagem com Pillow.
-- O bot devolve uma imagem com efeito visual simples.
+- O bot devolve uma imagem editada de volta no chat.
 
 ## Tecnologias
 
@@ -18,9 +18,11 @@ Bot do Telegram para processar fotos com efeitos simples e devolver a imagem edi
 
 1. Crie um bot no Telegram usando o @BotFather.
 2. Copie o token do bot.
-3. Crie um arquivo `.env` com o conteúdo do exemplo:
+3. Crie um arquivo `.env` com o seguinte conteúdo:
 
-   `BOT_TOKEN=SEU_TOKEN_AQUI`
+   ```env
+   BOT_TOKEN=SEU_TOKEN_AQUI
+   ```
 
 4. Instale as dependências:
 
