@@ -1,3 +1,154 @@
-aiogram==2.25.1
-python-dotenv==1.0.1
-Pillow==10.4.0
+import os
+from io import BytesIO
+from urllib.parse import quote, unquote
+
+from PIL import Image, ImageEnhance, ImageOps
+from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher.filters import Command
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN não foi encontrado. Crie um arquivo .env com o seu token do Telegram.")
+
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher(bot)
+
+FILTERS = {
+    "bw": "Preto & Branco",
+    "sepia": "Sépia",
+    "contrast": "Contraste",
+    "vintage": "Vintage",
+}
+
+
+def apply_filter(img: Image.Image, filter_name: str) -> Image.Image:
+    img = img.convert("RGB")
+
+    if filter_name == "bw":
+        return ImageOps.grayscale(img)
+
+    if filter_name == "sepia":
+        output = img.copy()
+        pixels = output.load()
+        width, height = output.size
+
+        for y in range(height):
+            for x in range(width):
+                r, g, b = output.getpixel((x, y))
+                tr = int(r * 0.94 + g * 0.77 + b * 0.35)
+                tg = int(r * 0.76 + g * 0.68 + b * 0.28)
+                tb = int(r * 0.56 + g * 0.48 + b * 0.22)
+                pixels[x, y] = (min(255, tr), min(255, tg), min(255, tb))
+
+        return output
+
+    if filter_name == "contrast":
+        return ImageEnhance.Contrast(img).enhance(2.0)
+
+    if filter_name == "vintage":
+        grayscale = ImageOps.grayscale(img)
+        grayscale = ImageEnhance.Contrast(grayscale).enhance(1.8)
+        sepia_tone = Image.new("RGB", grayscale.size, (113, 75, 36))
+        return Image.blend(grayscale.convert("RGB"), sepia_tone, 0.28)
+
+    return img
+
+
+def build_filter_keyboard(file_id: str) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    for key, label in FILTERS.items():
+        callback_data = f"filter:{quote(file_id)}:{key}"
+        keyboard.add(InlineKeyboardButton(label, callback_data=callback_data))
+    return keyboard
+
+
+@dp.message_handler(Command("start"))
+async def cmd_start(message: types.Message):
+    await message.answer(
+        "Bem-vindo ao PhotoCraft Telegram!\n\n"
+        "Envie uma foto para aplicar um filtro.\n"
+        "Comandos disponíveis:\n"
+        "/start - iniciar\n"
+        "/help - ajuda\n"
+        "/menu - ver filtros"
+    )
+
+
+@dp.message_handler(Command("help"))
+async def cmd_help(message: types.Message):
+    await message.answer(
+        "Como usar:\n"
+        "1. Envie uma foto para o bot\n"
+        "2. Escolha um filtro\n"
+        "3. Receba a imagem editada\n\n"
+        "Você também pode usar /menu para abrir os filtros."
+    )
+
+
+@dp.message_handler(Command("menu"))
+async def cmd_menu(message: types.Message):
+    await message.answer(
+        "Selecione um filtro para a próxima foto.",
+        reply_markup=InlineKeyboardMarkup(row_width=2).add(
+            InlineKeyboardButton("Preto & Branco", callback_data="menu:bw"),
+            InlineKeyboardButton("Sépia", callback_data="menu:sepia"),
+            InlineKeyboardButton("Contraste", callback_data="menu:contrast"),
+            InlineKeyboardButton("Vintage", callback_data="menu:vintage"),
+        ),
+    )
+
+
+@dp.message_handler(content_types=['photo'])
+async def handle_photo(message: types.Message):
+    photo = message.photo[-1]
+    await message.answer_photo(
+        photo.file_id,
+        caption="Escolha um filtro para sua foto:",
+        reply_markup=build_filter_keyboard(photo.file_id),
+    )
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith("menu:"))
+async def handle_menu_callback(callback_query: types.CallbackQuery):
+    _, filter_name = callback_query.data.split(":", 1)
+    await bot.answer_callback_query(
+        callback_query.id,
+        text=f"Selecione uma foto para aplicar o filtro: {FILTERS[filter_name]}",
+        show_alert=False,
+    )
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith("filter:"))
+async def handle_filter_callback(callback_query: types.CallbackQuery):
+    _, encoded_file_id, filter_name = callback_query.data.split(":", 2)
+    file_id = unquote(encoded_file_id)
+
+    await bot.answer_callback_query(
+        callback_query.id,
+        text=f"Aplicando filtro: {FILTERS[filter_name]}",
+        show_alert=False,
+    )
+
+    file = await bot.get_file(file_id)
+    file_bytes = await bot.download_file(file.file_path)
+
+    img = Image.open(BytesIO(file_bytes)).convert("RGB")
+    edited = apply_filter(img, filter_name)
+
+    output = BytesIO()
+    edited.save(output, format="JPEG", quality=90)
+    output.seek(0)
+
+    await callback_query.message.reply_photo(
+        types.InputFile(output, filename=f"photo_craft_{filter_name}.jpg"),
+        caption=f"✨ Efeito aplicado: {FILTERS[filter_name]}",
+    )
+
+
+if __name__ == "__main__":
+    executor.start_polling(dp, skip_updates=True)

@@ -1,12 +1,20 @@
 # PhotoCrafttelegram
 
-Bot do Telegram para processar fotos com efeitos simples e devolver a imagem editada dentro do próprio Telegram.
+Versão 2 do bot do Telegram para processar fotos com filtros e devolver a imagem editada no próprio chat.
+
+## O que mudou na versão 2
+
+- menu com filtros interativos
+- opções de edição: Preto & Branco, Sépia, Contraste e Vintage
+- envio de imagem com resposta em linha no Telegram
+- melhor experiência para usuários que enviam fotos diretamente para o bot
 
 ## Como funciona
 
 - O usuário envia uma foto para o bot.
-- O bot processa a imagem com Pillow.
-- O bot devolve uma imagem editada de volta no chat.
+- O bot mostra opções de filtros.
+- O usuário escolhe um efeito.
+- O bot retorna a imagem com o filtro aplicado.
 
 ## Tecnologias
 
@@ -40,7 +48,8 @@ Bot do Telegram para processar fotos com efeitos simples e devolver a imagem edi
 
 - `/start` — inicia o bot
 - `/help` — mostra instruções de uso
+- `/menu` — mostra opções de filtro
 
 ## Observação
 
-Este projeto foi estruturado como um bot do Telegram dentro do próprio aplicativo, seguindo o nome e a ideia inicial do repositório.
+Esta é uma versão mais completa do projeto, funcionando diretamente dentro do aplicativo Telegram como um bot de processamento de imagem.
