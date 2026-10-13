@@ -1,20 +1,24 @@
 # PhotoCrafttelegram
 
-Versão 4 do bot do Telegram para edição de fotos com filtros profissionais, marca d'água e melhor experiência de uso.
+Versão 5 do bot do Telegram para edição de fotos com filtros profissionais, marca d'água e melhor experiência de uso.
 
-## O que mudou na versão 4
+## O que mudou na versão 5
 
 - filtros mais completos
-- suporte a brilho, frio, sharpen e marca d'água
-- melhor organização do código do bot
-- experiência mais profissional com mensagens de confirmação e ajuda
+- integração de marca d'água e brilho
+- feedback visual mais profissional
+- menu interativo melhorado
+- estrutura do bot organizada para fácil manutenção
+- suporte a doação opcional via TON (Gram) e outras opções de apoio
 
 ## Funcionalidades
 
 - envio de fotos diretamente no Telegram
 - escolha de filtro em menu interativo
-- processamento de imagem com Pillow
+- edição de imagem com Pillow
 - retorno da foto editada no chat
+- opção de texto de marca d'água na imagem
+- comando `/donate` para apoiar o projeto de forma opcional
 
 ## Tecnologias
 
@@ -30,6 +34,10 @@ Versão 4 do bot do Telegram para edição de fotos com filtros profissionais, m
 
    ```env
    BOT_TOKEN=SEU_TOKEN_AQUI
+   DONATE_TON_ADDRESS=SEU_ENDERECO_TON
+   DONATE_KOFI=
+   DONATE_PAYPAL=
+   DONATE_GITHUB=
    ```
 
 4. Instale as dependências:
@@ -47,9 +55,10 @@ Versão 4 do bot do Telegram para edição de fotos com filtros profissionais, m
 ## Comandos
 
 - `/start` — inicia o bot
-- `/help` — ajuda
+- `/help` — mostra instruções de uso
 - `/menu` — mostra filtros
+- `/donate` — mostra opções de apoio voluntário
 
 ## Observação
 
-Esta é uma versão mais avançada do projeto, funcionando diretamente dentro do aplicativo do Telegram como um bot de processamento de imagem.
+Esta versão é um bot funcionando dentro do aplicativo do Telegram, ideal para edição de fotos diretamente no chat. O apoio é totalmente opcional.
