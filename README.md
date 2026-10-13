@@ -1,64 +1,59 @@
 # PhotoCrafttelegram
 
-Versão 5 do bot do Telegram para edição de fotos com filtros profissionais, marca d'água e melhor experiência de uso.
+Bot do Telegram para edição de fotos diretamente no chat, com filtros profissionais, menu interativo e suporte opcional a doações.
 
-## O que mudou na versão 5
+## Visão geral
 
-- filtros mais completos
-- integração de marca d'água e brilho
-- feedback visual mais profissional
-- menu interativo melhorado
-- estrutura do bot organizada para fácil manutenção
-- suporte a doação opcional via TON (Gram) e outras opções de apoio
+O PhotoCrafttelegram permite que o usuário envie uma imagem e escolha filtros para aplicar no Telegram, recebendo o resultado imediatamente no chat.
 
 ## Funcionalidades
 
-- envio de fotos diretamente no Telegram
-- escolha de filtro em menu interativo
-- edição de imagem com Pillow
-- retorno da foto editada no chat
-- opção de texto de marca d'água na imagem
-- comando `/donate` para apoiar o projeto de forma opcional
+- envio de fotos no Telegram
+- menu interativo com filtros
+- edição de imagens com Pillow
+- filtros: Preto & Branco, Sépia, Contraste, Vintage, Warm, Sharpen, Brilho, Frio, Suave e Marca d'água
+- comando /donate para apoio opcional
+- ambiente pronto para execução local
 
-## Tecnologias
+## Como configurar
+
+Crie um arquivo `.env` na raiz do projeto com:
+
+```env
+BOT_TOKEN=SEU_TOKEN_DO_BOT
+DONATE_TON_ADDRESS=UQDfIXVzruwv_nqmpK6L7nsKGfUb_8pGqLJ9_cHZleH6mDbd
+DONATE_KOFI=
+DONATE_PAYPAL=
+DONATE_GITHUB=
+```
+
+## Instalação
+
+```bash
+pip install -r requirements.txt
+python bot.py
+```
+
+## Comandos do bot
+
+- /start — mensagem inicial
+- /help — explica como usar
+- /menu — abre o menu de filtros
+- /donate — mostra opções de apoio opcional
+
+## Observações
+
+- A doação é totalmente opcional.
+- O bot funciona normalmente sem doação.
+- O endereço TON pode ser trocado por qualquer outra carteira de sua preferência.
+
+## Stack
 
 - Python
 - aiogram
 - Pillow
+- python-dotenv
 
-## Como executar
+## Repositório
 
-1. Crie um bot usando o @BotFather.
-2. Copie o token do bot.
-3. Crie um arquivo `.env` com:
-
-   ```env
-   BOT_TOKEN=SEU_TOKEN_AQUI
-   DONATE_TON_ADDRESS=SEU_ENDERECO_TON
-   DONATE_KOFI=
-   DONATE_PAYPAL=
-   DONATE_GITHUB=
-   ```
-
-4. Instale as dependências:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. Inicie o bot:
-
-   ```bash
-   python bot.py
-   ```
-
-## Comandos
-
-- `/start` — inicia o bot
-- `/help` — mostra instruções de uso
-- `/menu` — mostra filtros
-- `/donate` — mostra opções de apoio voluntário
-
-## Observação
-
-Esta versão é um bot funcionando dentro do aplicativo do Telegram, ideal para edição de fotos diretamente no chat. O apoio é totalmente opcional.
+https://github.com/nobrezatecidos513-dot/PhotoCrafttelegram
